@@ -1,0 +1,90 @@
+import axiosInstance from "@/lib/axios";
+import { InteractionData, UserSignin, UserSignup } from "../types/user";
+import { AuthUser, Category, CategoryRequest, CategoryWithProductCount, PaginationMeta, PaginationRequest, Product, ProductPaginationRequest, SalesAnalytics, User } from "../types/response";
+import { AxiosResponse } from "axios";
+
+
+export const signup = async (data : UserSignup): Promise<void> => {
+     await axiosInstance.post("/user", data);
+}
+
+export const signin = async (data: UserSignin): Promise<AuthUser> => {
+    const response = await axiosInstance.post("/user/login", data);
+    return response.data;
+}
+
+export const getAllProducts = async ({paginationData}:{paginationData: ProductPaginationRequest}): Promise<AxiosResponse<{data: Product[], meta: PaginationMeta}>> => {
+      const { categories, ...rest } = paginationData
+
+    const response = await axiosInstance.get("/products", {params: {...rest, categories: categories.join(",")}});
+    return response
+}
+
+export const getProductById = async (productId: string): Promise<AxiosResponse<Product>> => {
+    const response = await axiosInstance.get(`/product/${productId}`);
+    return response;
+}
+
+export const getAllCategories = async (): Promise<AxiosResponse<Category[]>> => {
+    const response = await axiosInstance.get("/categories");
+    return response;
+}
+
+export const getProfile = async () : Promise<User> => {
+    const response = await axiosInstance.get("/user/profile");
+    return response.data
+}
+
+export const createCategory = async(data: CategoryRequest): Promise<AxiosResponse<Category>> => {
+    return await axiosInstance.post("/admin/category", data)
+}
+
+export const getAllCategoriesForAdmin = async () : Promise<AxiosResponse<CategoryWithProductCount[]>> => {
+    const response = await axiosInstance.get("/admin/categories");
+    return response;
+}
+
+export const getProductsByCategory = async (categoryId: string, { paginationData }: { paginationData: PaginationRequest }) :  Promise<AxiosResponse<{data: Product[], meta: PaginationMeta}>> => {
+    const response = await axiosInstance.get(`/admin/products/category/${categoryId}`, { params: paginationData });
+    return response;
+}
+
+
+export const getUserProfile = async () : Promise<AxiosResponse<User>> => {
+    const response = await axiosInstance.get(`/user/profile`);
+    return response;
+}
+
+export const adminGetAllUsers = async ({ paginationData }: { paginationData: PaginationRequest }) : Promise<AxiosResponse<{data: User[], meta: PaginationMeta}>> => {
+    const response = await axiosInstance.get("/admin/users", { params: paginationData });
+    return response;
+}
+
+export const salesAnalytics = async(time?: string): Promise<AxiosResponse<SalesAnalytics>> => {
+    const response = await axiosInstance.get("/admin/sales/analytics", { params: { time } });
+    return response;
+}
+
+export const updateUserInteractions = (interactionsData: InteractionData): Promise<void> => {
+    return axiosInstance.post("/user/interaction", interactionsData);
+}
+
+export const deleteProductById = async(productId: string): Promise<void> => {
+    return axiosInstance.delete(`/product/delete/${productId}`);
+}
+
+export const updateProductById = async(productId: string, productData: FormData): Promise<AxiosResponse<Product>> => {
+    return axiosInstance.put(`/product/update/${productId}`, productData);
+}
+
+export const getProductByUserId = async( { paginationData }: { paginationData: ProductPaginationRequest }) : Promise<AxiosResponse<{data: Product[], meta: PaginationMeta}>> => {
+    const response = await axiosInstance.get(`/products/user/my-products`, { params: paginationData });
+    return response;
+}
+
+export const recommendedProducts = async({paginationData}: {paginationData: ProductPaginationRequest}): Promise<AxiosResponse<{data: Product[], meta: PaginationMeta}>> => {
+    const { categories, ...rest } = paginationData
+
+    const response = await axiosInstance.get("/user/recommended-products", {params: {...rest, categories: categories.join(",")}});
+    return response
+}

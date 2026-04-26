@@ -1,0 +1,12 @@
+import { Product } from "@prisma/client";
+import { IProductRepository } from "../domain/repository/product.repository";
+import { PaginateResponse } from "src/contexts/shared/domain/interface/paginate";
+import { ProductPaginateRequest } from "../domain/interface/product-paginate.interface";
+
+export class GetAllProductsService {
+    constructor(private readonly productRepository: IProductRepository) { }
+
+    async invoke({limit, page, search, categories}:ProductPaginateRequest): Promise<PaginateResponse< Partial<Product[]>>>{
+        return this.productRepository.getAllProducts({limit, page, search, categories});
+    }
+}

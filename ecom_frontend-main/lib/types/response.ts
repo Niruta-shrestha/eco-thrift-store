@@ -1,0 +1,90 @@
+import { UserRole } from "../enums"
+
+
+export interface User {
+   id: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    address: string,
+    role: UserRole,
+    image: string,
+    phone: string
+}
+export interface AuthUser {
+  token: {
+    access_token: string,
+    refresh_token: string
+  },
+  user: User
+
+}
+
+export interface PaginationRequest {
+  page: number,
+  pageSize: number,
+  search: string
+}
+
+export interface ProductPaginationRequest extends PaginationRequest {
+  categories: string[]
+}
+
+export interface PaginationMeta {
+  limit: number,
+  total_records: number,
+  total_pages: number,
+  current_page: number,
+  is_first_page: boolean,
+  is_last_page: boolean
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string | null;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  image: string | null;
+  userId: string;
+  createdAt: string;
+  updatedAt: string; 
+  deletedAt: string | null;
+  categories: Category[];
+  user?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    image: string | null
+  }
+}
+
+  export interface JwtPayload {
+  user_id: string;         
+  role: UserRole; 
+  scope: string[];        
+  iat: number;             
+  exp: number;            
+}
+
+export interface CategoryRequest {
+  name: string
+}
+
+export interface CategoryWithProductCount extends Category{
+  _count: {products: number};
+}
+
+export interface SalesAnalytics {
+    total_sales: number;
+    users: number;
+    count: number
+}
